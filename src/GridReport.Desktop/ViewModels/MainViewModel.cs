@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using GridReport.Core.Domain;
 using GridReport.Core.Mapping;
 using GridReport.Core.Reporting;
@@ -26,6 +27,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public GridProject Project { get => _project; private set { _project = value; OnChanged(); OnChanged(nameof(ProjectTitle)); } }
     public string ProjectTitle => string.IsNullOrWhiteSpace(Project.Name) ? "未命名项目" : Project.Name;
     public string StatusText { get => _statusText; private set { _statusText = value; OnChanged(); } }
+    public string BridgeStatusText => Application.Current is App app ? $"WPS Bridge：{app.BridgeStatus}；{app.BridgeAddress}" : "WPS Bridge：不可用";
     public ObservableCollection<FileRecord> Files { get; } = [];
     public ObservableCollection<MappingRow> Mappings { get; } = [];
     public ObservableCollection<PreflightIssue> PreflightIssues { get; } = [];
@@ -79,8 +81,9 @@ public sealed class MainViewModel : INotifyPropertyChanged
         StatusText = $"已生成报告副本：替换 {result.ReplacedCount} 处字段。"; Log.Information("生成报告 {Output}，替换 {Count} 处", outputPath, result.ReplacedCount); return result;
     }
 
-    public void Save(string projectFile) { _store.Save(Project, projectFile); StatusText = "项目已保存。"; Log.Information("保存项目 {File}", projectFile); }
-    public void Open(string projectFile) { Project = _store.Load(projectFile); Files.Clear(); Mappings.Clear(); PreflightIssues.Clear(); ExtractedValues.Clear(); StatusText = "项目已打开。请重新扫描资料并加载模板以刷新工作区。"; Log.Information("打开项目 {File}", projectFile); }
+    public void Save(string projectFile) { _store.Save(Project, projectFile); (Application.Current as App)?.RegisterBridgeProject(projectFile); StatusText = "项目已保存，并已登记到 WPS Bridge。"; Log.Information("保存项目 {File}", projectFile); }
+    public void Open(string projectFile) { Project = _store.Load(projectFile); (Application.Current as App)?.RegisterBridgeProject(projectFile); Files.Clear(); Mappings.Clear(); PreflightIssues.Clear(); ExtractedValues.Clear(); StatusText = "项目已打开，并已登记到 WPS Bridge。请重新扫描资料并加载模板以刷新工作区。"; Log.Information("打开项目 {File}", projectFile); }
+    public void RestartBridge() { (Application.Current as App)?.RestartBridge(); OnChanged(nameof(BridgeStatusText)); }
 
     private void PopulateMappings(IEnumerable<FieldMapping> mappings)
     {

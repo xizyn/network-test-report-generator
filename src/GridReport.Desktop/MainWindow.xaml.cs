@@ -25,6 +25,7 @@ public partial class MainWindow : Window
     private void OpenOutput_Click(object sender, RoutedEventArgs e) => Run(() => Process.Start(new ProcessStartInfo("explorer.exe", Required(_viewModel.Project.OutputFolder, "请先设置输出目录。")) { UseShellExecute = true }));
     private void SaveProject_Click(object sender, RoutedEventArgs e) { var dialog = new SaveFileDialog { Filter = "涉网试验项目 (*.gridreport.json)|*.gridreport.json", FileName = _viewModel.Project.Name + ".gridreport.json" }; if (dialog.ShowDialog() == true) Run(() => _viewModel.Save(dialog.FileName)); }
     private void OpenProject_Click(object sender, RoutedEventArgs e) { var dialog = new OpenFileDialog { Filter = "涉网试验项目 (*.gridreport.json)|*.gridreport.json" }; if (dialog.ShowDialog() == true) Run(() => _viewModel.Open(dialog.FileName)); }
+    private void RestartBridge_Click(object sender, RoutedEventArgs e) => Run(_viewModel.RestartBridge);
 
     private void Generate(ReportMode mode)
     {

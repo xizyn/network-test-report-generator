@@ -10,12 +10,14 @@
     window.GridReportAction = action;
     var app = application();
     if (!app || !app.CreateTaskPane) throw new Error('当前 WPS 版本未提供 JS Add-in 任务窗格 API。');
-    var pane = app.CreateTaskPane('taskpane.html', '涉网试验');
+    // Task pane is hosted by the Desktop Bridge, so all fetch calls are same-origin.
+    var pane = app.CreateTaskPane('http://127.0.0.1:43801/wps/taskpane.html', '涉网试验报告助手');
     if (!pane) throw new Error('WPS 拒绝加载任务窗格；请检查加载项签名、地址安全策略和网络访问。');
     pane.Visible = true;
   };
 
   window.onImportProject = function () { openGridReportPane('导入项目'); };
+  window.onProject = function () { openGridReportPane('项目'); };
   window.onScanFiles = function () { openGridReportPane('扫描资料'); };
   window.onDataCenter = function () { openGridReportPane('数据中心'); };
   window.onTemplateFields = function () { openGridReportPane('模板字段'); };

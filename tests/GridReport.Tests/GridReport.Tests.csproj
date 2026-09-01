@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\GridReport.Core\GridReport.Core.csproj" />
+    <ProjectReference Include="..\..\src\GridReport.Bridge\GridReport.Bridge.csproj" />
   </ItemGroup>
 
 </Project>

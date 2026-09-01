@@ -4,6 +4,7 @@
     <tabs>
       <tab id="gridReportTab" label="涉网试验">
         <group id="gridReportWorkflow" label="报告工作流">
+          <button id="grProject" label="项目" onAction="onProject" imageMso="FileProperties" />
           <button id="grImport" label="导入项目" onAction="onImportProject" imageMso="FileOpen" />
           <button id="grScan" label="扫描资料" onAction="onScanFiles" imageMso="Find" />
           <button id="grData" label="数据中心" onAction="onDataCenter" imageMso="DatabaseTools" />

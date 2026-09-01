@@ -2,6 +2,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GridReport.Core\GridReport.Core.csproj" />
+    <ProjectReference Include="..\GridReport.Bridge\GridReport.Bridge.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\wps-addin\taskpane.html" Link="wps-addin\taskpane.html" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\wps-addin\taskpane.js" Link="wps-addin\taskpane.js" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

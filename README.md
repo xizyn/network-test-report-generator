@@ -11,6 +11,7 @@
 - 精确匹配、别名建议、重复字段多目标写入、可编辑的字段确认表。
 - 草稿/正式报告 Preflight，原模板保护、输出不静默覆盖、局部文本替换与日志。
 - WPF 桌面工作台及 WPS 任务窗格适配层（详见 `wps-addin/`）。
+- Desktop 自动启动 localhost WPS Bridge；任务窗格通过同源 API 调用扫描、字段、校核和报告生成（详见 `docs/wps-bridge.md`）。
 
 ## 环境与编译
 
@@ -56,6 +57,7 @@ dotnet publish src\GridReport.Desktop\GridReport.Desktop.csproj -c Release -r wi
 - [FEL 工作流](docs/fel-workflow.md)
 - [DWG 工作流](docs/dwg-workflow.md)
 - [WPS 适配层](wps-addin/README.md)
+- [WPS Bridge API](docs/wps-bridge.md)
 
 ## 依赖与许可证
 
