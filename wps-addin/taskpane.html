@@ -1,0 +1,7 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>涉网试验</title><style>
+body{font:14px "Microsoft YaHei",sans-serif;margin:0;background:#f5f7fa;color:#243447}.head{background:#12365b;color:white;padding:18px}.card{margin:14px;padding:14px;background:white;border:1px solid #dbe3ea;border-radius:5px}.action{font-size:18px;font-weight:600}.hint{line-height:1.6;color:#52616f}button{background:#1666c5;color:#fff;border:0;padding:9px 12px;border-radius:3px;cursor:pointer}
+</style></head><body><div class="head"><strong>涉网试验报告</strong><br><small>WPS 工作台</small></div><div class="card"><div id="action" class="action">加载中</div><p class="hint">此任务窗格引导你在独立桌面端完成资料预检、字段确认和安全报告生成。正式报告不可绕过人工确认。</p><button onclick="refresh()">刷新状态</button></div><div class="card"><strong>连接状态</strong><p id="status" class="hint">未检测到本地桥接服务。请启动“涉网试验报告自动生成系统”桌面端。</p></div><script>
+document.getElementById('action').textContent=(window.parent&&window.parent.GridReportAction)||'涉网试验工作流';
+async function refresh(){const target=document.getElementById('status');try{const r=await fetch('http://127.0.0.1:43801/api/status',{mode:'cors'});if(!r.ok)throw new Error();const data=await r.json();target.textContent='已连接：'+(data.projectName||'未打开项目')+'；'+(data.summary||'');}catch{target.textContent='未检测到本地桥接服务。请启动“涉网试验报告自动生成系统”桌面端。';}}
+refresh();</script></body></html>

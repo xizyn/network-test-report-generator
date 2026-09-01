@@ -1,0 +1,41 @@
+<Window x:Class="GridReport.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="涉网试验报告自动生成系统" Height="820" Width="1280" MinHeight="640" MinWidth="980" Background="#F5F7FA">
+    <Window.Resources>
+        <Style TargetType="Button"><Setter Property="Margin" Value="4"/><Setter Property="Padding" Value="12,7"/><Setter Property="Background" Value="#1666C5"/><Setter Property="Foreground" Value="White"/><Setter Property="BorderThickness" Value="0"/></Style>
+        <Style TargetType="TextBox"><Setter Property="Margin" Value="4"/><Setter Property="Padding" Value="7"/></Style>
+        <Style TargetType="TextBlock"><Setter Property="VerticalAlignment" Value="Center"/></Style>
+    </Window.Resources>
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Background="#12365B" Padding="20,13">
+            <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                <StackPanel><TextBlock Text="涉网试验报告自动生成系统" FontSize="22" FontWeight="SemiBold" Foreground="White"/>
+                    <TextBlock Text="离线资料预检 · 可追溯字段映射 · 安全生成 DOCX" Foreground="#C9DDF4" Margin="0,3,0,0"/></StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal"><Button Content="新建项目" Click="NewProject_Click"/><Button Content="打开项目" Click="OpenProject_Click"/><Button Content="保存项目" Click="SaveProject_Click"/></StackPanel>
+            </Grid>
+        </Border>
+        <StatusBar DockPanel.Dock="Bottom"><StatusBarItem Content="{Binding StatusText}"/><Separator/><StatusBarItem Content="{Binding Summary}"/></StatusBar>
+        <Grid>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="185"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+            <Border Background="#1C2B3A" Grid.Column="0"><StackPanel Margin="12">
+                <TextBlock Text="工作区" Foreground="#9FB3C8" Margin="8,8,8,14"/>
+                <TextBlock Text="项目" Foreground="White" FontSize="16" Margin="8,8"/><TextBlock Text="资料预检" Foreground="White" FontSize="16" Margin="8,8"/><TextBlock Text="数据与字段" Foreground="White" FontSize="16" Margin="8,8"/><TextBlock Text="模板与报告" Foreground="White" FontSize="16" Margin="8,8"/><TextBlock Text="校核与日志" Foreground="White" FontSize="16" Margin="8,8"/>
+                <Separator Margin="8,18"/><TextBlock Text="正式报告仅允许已确认字段" Foreground="#F0C36B" TextWrapping="Wrap" Margin="8"/>
+            </StackPanel></Border>
+            <TabControl Grid.Column="1" Margin="14" Background="White">
+                <TabItem Header="项目">
+                    <ScrollViewer><StackPanel Margin="20"><TextBlock Text="项目基本信息" FontSize="20" FontWeight="SemiBold"/>
+                        <UniformGrid Columns="2" Margin="0,16,0,0"><StackPanel><TextBlock Text="项目名称"/><TextBox Text="{Binding Project.Name, UpdateSourceTrigger=PropertyChanged}"/></StackPanel><StackPanel><TextBlock Text="客户名称"/><TextBox Text="{Binding Project.CustomerName, UpdateSourceTrigger=PropertyChanged}"/></StackPanel><StackPanel><TextBlock Text="项目编号"/><TextBox Text="{Binding Project.ProjectNumber, UpdateSourceTrigger=PropertyChanged}"/></StackPanel><StackPanel><TextBlock Text="电站名称"/><TextBox Text="{Binding Project.StationName, UpdateSourceTrigger=PropertyChanged}"/></StackPanel><StackPanel><TextBlock Text="测试日期"/><DatePicker SelectedDate="{Binding Project.TestDate}" Margin="4"/></StackPanel><StackPanel><TextBlock Text="输出目录"/><DockPanel><Button DockPanel.Dock="Right" Content="选择" Click="ChooseOutput_Click"/><TextBox Text="{Binding Project.OutputFolder, UpdateSourceTrigger=PropertyChanged}"/></DockPanel></StackPanel></UniformGrid>
+                        <TextBlock Text="客户资料目录" Margin="4,18,4,0"/><DockPanel><Button DockPanel.Dock="Right" Content="选择" Click="ChooseSource_Click"/><TextBox Text="{Binding Project.SourceFolder, UpdateSourceTrigger=PropertyChanged}"/></DockPanel>
+                        <TextBlock Text="报告模板（DOCX）" Margin="4,12,4,0"/><DockPanel><Button DockPanel.Dock="Right" Content="选择" Click="ChooseTemplate_Click"/><TextBox Text="{Binding Project.TemplatePath, UpdateSourceTrigger=PropertyChanged}"/></DockPanel>
+                    </StackPanel></ScrollViewer>
+                </TabItem>
+                <TabItem Header="资料预检"><DockPanel Margin="12"><StackPanel DockPanel.Dock="Top" Orientation="Horizontal"><Button Content="扫描资料" Click="Scan_Click"/><TextBlock Text="按文件头、ZIP 目录结构和文本特征识别；单个失败不阻断扫描。" Margin="12" Foreground="#56616F"/></StackPanel><DataGrid ItemsSource="{Binding Files}" AutoGenerateColumns="False" IsReadOnly="True" Margin="0,12,0,0"><DataGrid.Columns><DataGridTextColumn Header="文件" Binding="{Binding FileName}" Width="2*"/><DataGridTextColumn Header="扩展名" Binding="{Binding Extension}"/><DataGridTextColumn Header="真实类型" Binding="{Binding Kind}"/><DataGridTextColumn Header="状态" Binding="{Binding Status}"/><DataGridTextColumn Header="处理方式" Binding="{Binding Handling}" Width="2*"/><DataGridTextColumn Header="详情" Binding="{Binding Detail}" Width="2*"/></DataGrid.Columns></DataGrid></DockPanel></TabItem>
+                <TabItem Header="字段映射"><DockPanel Margin="12"><StackPanel DockPanel.Dock="Top" Orientation="Horizontal"><Button Content="扫描模板并匹配" Click="LoadTemplate_Click"/><Button Content="重新匹配" Click="ReMatch_Click"/><TextBlock Text="编辑“当前值”并勾选确认；正式报告只接受已确认的必填字段。" Margin="12" Foreground="#56616F"/></StackPanel><DataGrid ItemsSource="{Binding Mappings}" AutoGenerateColumns="False" Margin="0,12,0,0"><DataGrid.Columns><DataGridTextColumn Header="模板字段" Binding="{Binding Field}" IsReadOnly="True"/><DataGridTextColumn Header="模板原内容" Binding="{Binding TemplateText}" IsReadOnly="True"/><DataGridTextColumn Header="当前值（可编辑）" Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Width="2*"/><DataGridTextColumn Header="来源" Binding="{Binding Source}" IsReadOnly="True"/><DataGridTextColumn Header="来源位置" Binding="{Binding SourceLocation}" IsReadOnly="True"/><DataGridTextColumn Header="状态" Binding="{Binding Status}" IsReadOnly="True"/><DataGridCheckBoxColumn Header="确认" Binding="{Binding Confirmed}"/></DataGrid.Columns></DataGrid></DockPanel></TabItem>
+                <TabItem Header="报告校核"><DockPanel Margin="12"><StackPanel DockPanel.Dock="Top" Orientation="Horizontal"><Button Content="校核正式报告" Click="CheckFormal_Click"/><Button Content="生成草稿 DOCX" Click="GenerateDraft_Click"/><Button Content="生成正式 DOCX" Click="GenerateFormal_Click"/><Button Content="打开输出目录" Click="OpenOutput_Click"/></StackPanel><DataGrid ItemsSource="{Binding PreflightIssues}" AutoGenerateColumns="False" IsReadOnly="True" Margin="0,12,0,0"><DataGrid.Columns><DataGridTextColumn Header="等级" Binding="{Binding Severity}"/><DataGridTextColumn Header="代码" Binding="{Binding Code}"/><DataGridTextColumn Header="说明" Binding="{Binding Message}" Width="*"/></DataGrid.Columns></DataGrid></DockPanel></TabItem>
+                <TabItem Header="使用说明"><ScrollViewer><StackPanel Margin="20"><TextBlock Text="V1 工作顺序" FontSize="20" FontWeight="SemiBold"/><TextBlock Margin="0,12" TextWrapping="Wrap" Text="1. 新建项目并保存。&#10;2. 选择客户资料目录，扫描并检查需要人工处理的文件。&#10;3. 选择由 WPS/Word 批注标记字段的 DOCX 模板。&#10;4. 检查字段映射，修改或补填后勾选确认。&#10;5. 先生成草稿核对；全部关键字段确认后生成正式报告。&#10;&#10;FEL 请用 Energy Analyze Plus 导出 CSV/XLSX；DWG 请转换为 PDF/PNG 后作为资料归档或图片字段使用。"/></StackPanel></ScrollViewer></TabItem>
+            </TabControl>
+        </Grid>
+    </DockPanel>
+</Window>
