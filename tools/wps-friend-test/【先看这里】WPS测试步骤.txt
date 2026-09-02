@@ -6,7 +6,7 @@
 2. 双击 01-GridReport\GridReport.Desktop.exe，保持软件运行。
 3. 在软件“设置”页确认：WPS Bridge 为“运行中”，地址是 http://127.0.0.1:43801。
 4. 双击“检查测试环境.bat”。WPS 与 Bridge 都正常后继续。
-5. 双击 02-WPS-Addin\publish.html。在打开的“WPS加载项配置”页找到“gridreportwps / 文字 / 在线 / http://127.0.0.1:43801/wps/”，点击“安装”。看到“配置成功！”后关闭页面。
+5. 双击 02-WPS-Addin\wps-addon-publish\publish.html。在打开的“WPS加载项配置”页找到“gridreportwps / 文字 / 在线 / http://127.0.0.1:43801/wps/”，点击“安装”。看到“配置成功！”后关闭页面。
 6. 完全退出 WPS（包括所有 WPS 文字窗口）并重新打开 WPS 文字。顶部应出现“涉网试验”；请截图。
 7. 在 GridReport 点击“打开项目”，选择 04-Test-Project\WPS集成测试项目.gridreport.json；若文件不存在，先双击 04-Test-Project\创建测试项目.bat。
 8. 在 WPS 点击“涉网试验 → 项目”。右侧应出现“涉网试验报告助手”和“Bridge：已连接 · API v1”；请截图。
