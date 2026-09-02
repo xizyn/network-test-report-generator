@@ -1,5 +1,5 @@
 /* Runs inside the WPS task pane. API calls are real same-origin calls to the Desktop Bridge. */
-const state = { id: null, currentDocument: null };
+const state = { id: null, currentDocument: null, mappings: [] };
 const headers = { 'Content-Type': 'application/json', 'X-GridReport-Client': 'wps' };
 const el = id => document.getElementById(id);
 
@@ -43,7 +43,29 @@ async function scan() {
 }
 async function loadMappings() {
   if (!state.id) return message('请先选择项目。', true);
-  try { const mappings = await api(`/projects/${state.id}/mapping`); message(mappings.map(x => `${x.fieldName} → ${x.value || '未匹配'} [${x.status}]`).join('\n') || '模板没有批注字段。'); await loadProject(); } catch (error) { message(error.message, true); }
+  try {
+    const mappings = await api(`/projects/${state.id}/mapping`);
+    state.mappings = mappings;
+    renderMappings(mappings);
+    message(mappings.length ? '请核对字段值后点击“确认全部已有映射”，正式报告需要人工确认。' : '模板没有批注字段。');
+    await loadProject();
+  } catch (error) { message(error.message, true); }
+}
+function renderMappings(mappings) {
+  const target = el('mappingList');
+  target.innerHTML = mappings.map(mapping => `<div class="mapping-row"><strong>${escapeHtml(mapping.fieldName)}</strong><span>→ ${escapeHtml(mapping.value || '未匹配')}</span><em>${mapping.confirmed ? '已确认' : escapeHtml(mapping.status)}</em></div>`).join('') || '<span class="muted">暂无模板字段。</span>';
+}
+async function confirmAllMappings() {
+  if (!state.id) return message('请先选择项目。', true);
+  const mappings = state.mappings.filter(mapping => mapping.value);
+  if (!mappings.length) return message('没有可确认的字段，请先扫描资料并读取字段映射。', true);
+  try {
+    for (const mapping of mappings) {
+      await api(`/projects/${state.id}/mapping`, { method: 'POST', body: JSON.stringify({ fieldName: mapping.fieldName, value: mapping.value, confirmed: true }) });
+    }
+    await loadMappings();
+    message(`已确认 ${mappings.length} 个字段映射，可执行正式报告校核。`);
+  } catch (error) { message(error.message, true); }
 }
 async function preflight() {
   if (!state.id) return message('请先选择项目。', true);

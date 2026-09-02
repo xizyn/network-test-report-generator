@@ -7,3 +7,5 @@ publish/
 logs/
 wps-addin/wps-addon-build/
 wps-addin/wps-addon-publish/
+dist/
+tools/wps-friend-test/node_modules/
