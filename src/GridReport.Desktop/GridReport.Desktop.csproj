@@ -6,6 +6,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="..\..\wps-addin\ribbon.xml" Link="wps-addin\ribbon.xml" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\wps-addin\index.html" Link="wps-addin\index.html" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\wps-addin\main.js" Link="wps-addin\main.js" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\wps-addin\manifest.xml" Link="wps-addin\manifest.xml" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\..\wps-addin\taskpane.html" Link="wps-addin\taskpane.html" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\..\wps-addin\taskpane.js" Link="wps-addin\taskpane.js" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

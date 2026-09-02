@@ -1,0 +1,7 @@
+{
+  "name": "gridreportwps",
+  "version": "1.0.0",
+  "addonType": "wps",
+  "private": true,
+  "description": "涉网试验报告自动生成系统 WPS Writer 加载项"
+}

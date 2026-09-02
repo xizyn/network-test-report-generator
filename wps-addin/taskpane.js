@@ -10,6 +10,12 @@ async function api(path, options = {}) {
   return body;
 }
 function message(text, isError = false) { el('message').textContent = text; el('message').className = `details ${isError ? 'bad' : 'muted'}`; }
+function wpsApplication() {
+  if (typeof window !== 'undefined' && window.Application) return window.Application;
+  if (typeof Application !== 'undefined') return Application;
+  if (typeof window !== 'undefined' && window.wps && window.wps.WpsApplication) return window.wps.WpsApplication();
+  return null;
+}
 
 async function refreshAll() {
   try {
@@ -48,14 +54,14 @@ async function generate(mode) {
   try { const result = await api(`/projects/${state.id}/generate`, { method: 'POST', body: JSON.stringify({ mode }) }); message(`报告生成成功\n${result.outputPath}${result.warnings?.length ? `\n警告：${result.warnings.join('；')}` : ''}`); openInWps(result.outputPath); } catch (error) { message(error.message, true); }
 }
 function detectDocument() {
-  try { const app = window.wps && wps.WpsApplication ? wps.WpsApplication() : null; const doc = app && app.ActiveDocument; state.currentDocument = doc && (doc.FullName || (doc.Path && doc.Name ? `${doc.Path}\\${doc.Name}` : null)); el('document').textContent = state.currentDocument ? `已打开：${doc.Name || ''}\n${state.currentDocument}` : '未检测到已打开的 WPS 文字文档。'; } catch (_) { state.currentDocument = null; el('document').textContent = '当前 WPS 版本未能提供活动文档信息。'; }
+  try { const app = wpsApplication(); const doc = app && app.ActiveDocument; state.currentDocument = doc && (doc.FullName || (doc.Path && doc.Name ? `${doc.Path}\\${doc.Name}` : null)); el('document').textContent = state.currentDocument ? `已打开：${doc.Name || ''}\n${state.currentDocument}` : '未检测到已打开的 WPS 文字文档。'; } catch (_) { state.currentDocument = null; el('document').textContent = '当前 WPS 版本未能提供活动文档信息。'; }
 }
 async function setCurrentTemplate() {
   if (!state.id) return message('请先选择项目。', true); detectDocument();
   if (!state.currentDocument || !/\.docx$/i.test(state.currentDocument)) return message('当前文档不是可用的 .docx 模板。', true);
   try { await api(`/projects/${state.id}/template`, { method: 'POST', body: JSON.stringify({ templatePath: state.currentDocument }) }); message('已设为当前报告模板。生成报告仍会复制该模板，不会修改原文件。'); await loadProject(); } catch (error) { message(error.message, true); }
 }
-function openInWps(path) { try { const app = window.wps && wps.WpsApplication ? wps.WpsApplication() : null; if (app && app.Documents && app.Documents.Open) app.Documents.Open(path); } catch (_) { /* The output path remains visible for manual opening. */ } }
+function openInWps(path) { try { const app = wpsApplication(); if (app && app.Documents && app.Documents.Open) app.Documents.Open(path); } catch (_) { /* The output path remains visible for manual opening. */ } }
 function defineFieldHelp() { message('请在 WPS 中选中占位文本，使用“审阅 → 新建批注”填写字段名；V1 不使用不可靠的 JS API 自动写入批注。'); }
 function clearMetrics() { ['files', 'fields', 'matched', 'pending', 'errors', 'template'].forEach(id => { el(id).textContent = '--'; }); }
 function escapeHtml(value) { return String(value).replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c])); }

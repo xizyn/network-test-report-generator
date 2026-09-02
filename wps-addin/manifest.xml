@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<JsPlugin>
+  <ApiVersion>1.0.0</ApiVersion>
+  <Name>GridReportWps</Name>
+  <Description>涉网试验报告自动生成系统 WPS Writer 加载项</Description>
+</JsPlugin>

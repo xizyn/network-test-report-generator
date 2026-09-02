@@ -5,3 +5,5 @@ publish/
 *.user
 *.gridreport.json
 logs/
+wps-addin/wps-addon-build/
+wps-addin/wps-addon-publish/

@@ -121,6 +121,27 @@ public sealed class BridgeTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.BadRequest, invalid.StatusCode);
     }
 
+    [Fact]
+    public async Task Wps_online_addin_resources_are_served_from_the_same_loopback_origin()
+    {
+        await File.WriteAllTextAsync(Path.Combine(_root, "ribbon.xml"), "<customUI />");
+        await File.WriteAllTextAsync(Path.Combine(_root, "index.html"), "<script src=\"main.js\"></script>");
+        await File.WriteAllTextAsync(Path.Combine(_root, "main.js"), "function OnAddinLoad() { return true; }");
+        await File.WriteAllTextAsync(Path.Combine(_root, "manifest.xml"), "<JsPlugin />");
+
+        var ribbon = await _client.GetAsync("/wps/ribbon.xml");
+        var entry = await _client.GetAsync("/wps/index.html");
+        var main = await _client.GetAsync("/wps/main.js");
+        var manifest = await _client.GetAsync("/wps/manifest.xml");
+        var rejected = await _client.GetAsync("/wps/../../project.gridreport.json");
+
+        Assert.Equal(HttpStatusCode.OK, ribbon.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, entry.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, main.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, manifest.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, rejected.StatusCode);
+    }
+
     public async Task DisposeAsync()
     {
         if (_host is not null) await _host.StopAsync();

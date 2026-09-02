@@ -56,16 +56,21 @@ public sealed class BridgeHost : IAsyncDisposable
         app.MapPost("/projects/{id:guid}/template", (Guid id, TemplateUpdateRequest request) => Invoke(() => Results.Ok(_workflow.SetTemplate(id.ToString(), request))));
         app.MapPost("/projects/{id:guid}/preflight", (Guid id, PreflightRequest request) => Invoke(() => Results.Ok(_workflow.Preflight(id.ToString(), request.Mode))));
         app.MapPost("/projects/{id:guid}/generate", (Guid id, GenerateRequest request) => Invoke(() => { var result = _workflow.Generate(id.ToString(), request.Mode); return result.Success ? Results.Ok(result) : Results.BadRequest(result); }));
-        app.MapGet("/wps/taskpane.html", () => ServeAddinFile("taskpane.html"));
-        app.MapGet("/wps/taskpane.js", () => ServeAddinFile("taskpane.js"));
+        app.MapGet("/wps/{fileName}", (string fileName) => ServeAddinFile(fileName));
     }
 
     private IResult ServeAddinFile(string fileName)
     {
-        var allowed = fileName is "taskpane.html" or "taskpane.js";
+        var allowed = fileName is "ribbon.xml" or "index.html" or "main.js" or "manifest.xml" or "taskpane.html" or "taskpane.js";
         var path = Path.Combine(_options.AddinRoot, fileName);
         if (!allowed || !File.Exists(path)) return Results.NotFound();
-        return Results.File(path, fileName.EndsWith(".js", StringComparison.Ordinal) ? "text/javascript" : "text/html; charset=utf-8");
+        var contentType = Path.GetExtension(fileName).ToLowerInvariant() switch
+        {
+            ".js" => "text/javascript; charset=utf-8",
+            ".xml" => "application/xml; charset=utf-8",
+            _ => "text/html; charset=utf-8"
+        };
+        return Results.File(path, contentType);
     }
     private static IResult Invoke(Func<IResult> action)
     {
